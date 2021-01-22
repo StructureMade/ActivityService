@@ -71,5 +71,6 @@ public class User {
     private List<Activities> activities;
 
     @ManyToMany(targetEntity = Activities.class)
+    @JoinTable(name = "user_watched")
     List<Activities> watched;
 }
