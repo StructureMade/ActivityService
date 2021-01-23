@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class ActivityService {
     private final Logger LOGGER = LoggerFactory.getLogger(ActivityService.class);
 
     public int create(CreateActivity ca, String jwt) {
+        Calendar calendar = Calendar.getInstance();
         try {
             LOGGER.info("Check if jwt is expired");
             if (jwtUtil.isTokenExpired(jwt)) {
@@ -49,6 +51,11 @@ public class ActivityService {
             LOGGER.info("Get Lesson and set it to activitie");
             activitie.setLesson(lessonRepo.getOne(ca.getLesson()));
             activitie.setText(ca.getText());
+            String[] splitDate = ca.getDate().split("\\.");
+            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitDate[0]));
+            calendar.set(Calendar.MONTH, Integer.parseInt(splitDate[1]));
+            calendar.set(Calendar.YEAR, Integer.parseInt(splitDate[2]));
+            activitie.setValidThru(calendar.getTime());
             LOGGER.info("Get teacher and set it to activitie");
             activitie.setUser(userRepo.getOne(jwtUtil.extractIdOrEmail(jwt)));
             activitieRepo.save(activitie);

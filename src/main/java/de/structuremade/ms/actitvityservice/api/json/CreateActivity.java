@@ -9,13 +9,12 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class CreateActivity {
 
-    @NotNull(message = "survey need true or false")
-    private boolean survey;
+    private boolean survey = false;
 
     @NotNull(message = "lesson is needed")
     private String lesson;
 
     private String text;
 
-
+    private String date;
 }

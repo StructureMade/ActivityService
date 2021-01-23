@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -31,6 +32,12 @@ public class Activities {
 
     @Column
     private int no;
+
+    @Column
+    private boolean deleteNextLesson;
+
+    @Column
+    private Date validThru;
 
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "teacher", foreignKey = @ForeignKey(name = "fk_teacher"))
