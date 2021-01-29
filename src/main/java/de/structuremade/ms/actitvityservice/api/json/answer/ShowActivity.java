@@ -9,5 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ShowActivity {
     private String activity;
+    private String lessonId;
+    private String lesson;
     private boolean watched;
 }

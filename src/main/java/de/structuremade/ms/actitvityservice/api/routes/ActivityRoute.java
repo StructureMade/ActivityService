@@ -48,9 +48,13 @@ public class ActivityRoute {
 
     @CrossOrigin
     @GetMapping("/get/{lessonid}")
-    public Object get(@PathVariable String lessonid, HttpServletResponse response) {
-        List<GetActivity> activities = activityService.get(lessonid);
-        if (activities.get(0) != null) {
+    public Object get(@PathVariable String lessonid, HttpServletResponse response, HttpServletRequest request) {
+        List<GetActivity> activities = activityService.get(lessonid,request.getHeader("Authorization").substring(7));
+        if (activities != null) {
+            if (activities.get(0) != null){
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                return null;
+            }
             response.setStatus(HttpStatus.OK.value());
             return gson.toJson(activities);
         } else response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -59,10 +63,11 @@ public class ActivityRoute {
 
     @CrossOrigin
     @PutMapping("/vote")
-    public void vote(@RequestBody VoteActivity voteActivity, HttpServletResponse response){
-        switch (activityService.vote(voteActivity)){
+    public void vote(@RequestBody VoteActivity voteActivity, HttpServletResponse response, HttpServletRequest request){
+        switch (activityService.vote(voteActivity, request.getHeader("Authorization").substring(7))){
             case 0 -> response.setStatus(HttpStatus.OK.value());
             case 1 -> response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            case 2 -> response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
     }
 }
