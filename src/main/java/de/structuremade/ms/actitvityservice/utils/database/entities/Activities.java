@@ -47,8 +47,9 @@ public class Activities {
     @JoinColumn(name = "lesson", foreignKey = @ForeignKey(name = "fk_lesson"))
     private LessonRoles lesson;
 
-    @ManyToMany(targetEntity = User.class)
-    @JoinTable(name = "userWatched")
-    private List<User> users;
+    @ManyToMany(targetEntity = Activities.class)
+    @JoinTable(name = "userwatched",schema = "services", joinColumns = @JoinColumn(name = "userid", foreignKey = @ForeignKey(name = "fk_userid"))
+            , inverseJoinColumns = @JoinColumn(name = "activity", foreignKey = @ForeignKey(name = "fk_activity")))
+    List<Activities> watched;
 
 }

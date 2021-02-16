@@ -53,17 +53,17 @@ public class User {
 
     @ManyToMany(targetEntity = School.class, fetch = FetchType.LAZY)
     @JoinTable(name = "userschools", schema = "services", joinColumns = @JoinColumn(name = "userid", foreignKey = @ForeignKey(name = "fk_userid"))
-            , inverseJoinColumns = @JoinColumn(name = "schoolid", foreignKey = @ForeignKey(name = "fk_schoolid")))
+            , inverseJoinColumns = @JoinColumn(name = "school", foreignKey = @ForeignKey(name = "fk_schoolid")))
     private List<School> schools = new ArrayList<>();
 
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY)
     @JoinTable(name = "userroles", schema = "services", joinColumns = @JoinColumn(name = "userid", foreignKey = @ForeignKey(name = "fk_userid"))
-            , inverseJoinColumns = @JoinColumn(name = "roleid", foreignKey = @ForeignKey(name = "fk_roleid")))
+            , inverseJoinColumns = @JoinColumn(name = "role", foreignKey = @ForeignKey(name = "fk_roleid")))
     private List<Role> roles = new ArrayList<>();
 
     @ManyToMany(targetEntity = LessonRoles.class)
     @JoinTable(name = "userlessonroles", schema = "services", joinColumns = @JoinColumn(name = "userid", foreignKey = @ForeignKey(name = "fk_userid"))
-            , inverseJoinColumns = @JoinColumn(name = "lessonroleid", foreignKey = @ForeignKey(name = "fk_lessonroleid")))
+            , inverseJoinColumns = @JoinColumn(name = "lessonrole", foreignKey = @ForeignKey(name = "fk_lessonroleid")))
     private List<LessonRoles> lessonRoles;
 
     @OneToMany(targetEntity = Activities.class)
@@ -71,6 +71,7 @@ public class User {
     private List<Activities> activities;
 
     @ManyToMany(targetEntity = Activities.class)
-    @JoinTable(name = "user_watched")
-    List<Activities> watched;
+    @JoinTable(name = "userwatched",schema = "services", joinColumns = @JoinColumn(name = "userid", foreignKey = @ForeignKey(name = "fk_userid"))
+            , inverseJoinColumns = @JoinColumn(name = "activity", foreignKey = @ForeignKey(name = "fk_activity")))
+    private List<Activities> watched;
 }

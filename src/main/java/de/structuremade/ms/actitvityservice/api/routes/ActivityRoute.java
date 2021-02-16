@@ -47,11 +47,12 @@ public class ActivityRoute {
     }
 
     @CrossOrigin
-    @GetMapping("/get/{lessonid}")
+    @GetMapping("/show/{lessonid}")
     public Object get(@PathVariable String lessonid, HttpServletResponse response, HttpServletRequest request) {
         List<GetActivity> activities = activityService.get(lessonid,request.getHeader("Authorization").substring(7));
         if (activities != null) {
-            if (activities.get(0) != null){
+            GetActivity getActivity = activities.get(0);
+            if (getActivity.getText() == null){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return null;
             }

@@ -22,10 +22,23 @@ public class LessonRoles {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "schoolid", foreignKey = @ForeignKey(name = "fk_schoolid"))
+    @JoinColumn(name = "school", foreignKey = @ForeignKey(name = "fk_schoolid"))
     private School school;
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "teacher", foreignKey = @ForeignKey(name = "fk_teacherid"))
+    private User teacher;
 
     @OneToMany(targetEntity = Activities.class)
     @JoinColumn(name = "lesson")
     private List<Activities> activities;
+
+    @OneToMany
+    @JoinColumn(name = "lessonrole", foreignKey = @ForeignKey(name = "fk_lessonrole"))
+    private List<Lessons> lessons;
+
+    @ManyToMany(targetEntity = Class.class)
+    @JoinTable(name = "classlessons", schema = "services", joinColumns = @JoinColumn(name = "class", foreignKey = @ForeignKey(name = "fk_class"))
+            , inverseJoinColumns = @JoinColumn(name = "lessonrole", foreignKey = @ForeignKey(name = "fk_lessonrole")))
+    private List<Class> classOfLesson;
 }

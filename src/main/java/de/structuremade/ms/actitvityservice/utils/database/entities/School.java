@@ -28,12 +28,12 @@ public class School {
     @Column
     private String email;
 
-    @OneToMany(targetEntity = Role.class, orphanRemoval = true)
-    @JoinColumn(name = "schoolid", foreignKey = @ForeignKey(name = "fk_schoolid"))
+    @OneToMany(targetEntity = Role.class)
+    @JoinColumn(name = "school", foreignKey = @ForeignKey(name = "fk_schoolid"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(targetEntity = LessonSubstitutes.class, orphanRemoval = true)
-    @JoinColumn(name = "schoolid", foreignKey = @ForeignKey(name = "fk_schoolid"))
+    @OneToMany(targetEntity = LessonSubstitutes.class)
+    @JoinColumn(name = "school", foreignKey = @ForeignKey(name = "fk_schoolid"))
     private List<LessonSubstitutes> lessons = new ArrayList<>();
 
 

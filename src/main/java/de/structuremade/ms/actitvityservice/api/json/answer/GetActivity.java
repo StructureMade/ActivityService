@@ -2,10 +2,12 @@ package de.structuremade.ms.actitvityservice.api.json.answer;
 
 import de.structuremade.ms.actitvityservice.utils.database.entities.Activities;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class GetActivity {
     private String text;
     private boolean survey;

@@ -5,9 +5,7 @@ import de.structuremade.ms.actitvityservice.api.json.VoteActivity;
 import de.structuremade.ms.actitvityservice.api.json.answer.GetActivity;
 import de.structuremade.ms.actitvityservice.api.json.answer.ShowActivity;
 import de.structuremade.ms.actitvityservice.utils.JWTUtil;
-import de.structuremade.ms.actitvityservice.utils.database.entities.Activities;
-import de.structuremade.ms.actitvityservice.utils.database.entities.LessonRoles;
-import de.structuremade.ms.actitvityservice.utils.database.entities.User;
+import de.structuremade.ms.actitvityservice.utils.database.entities.*;
 import de.structuremade.ms.actitvityservice.utils.database.repo.ActivitieRepo;
 import de.structuremade.ms.actitvityservice.utils.database.repo.LessonRepo;
 import de.structuremade.ms.actitvityservice.utils.database.repo.UserRepo;
@@ -34,6 +32,7 @@ public class ActivityService {
     JWTUtil jwtUtil;
 
     public int create(CreateActivity ca, String jwt) {
+        boolean substitute = false;
         Calendar calendar = Calendar.getInstance();
         try {
             LOGGER.info("Check if jwt is expired");
@@ -45,12 +44,27 @@ public class ActivityService {
             activitie.setSurvey(ca.isSurvey());
             LOGGER.info("Get Lesson and set it to activitie");
             LessonRoles lr = lessonRepo.getOne(ca.getLesson());
-            if (lr.getSchool().getId().equals(jwtUtil.extractSpecialClaim(jwt, "schoolid"))) return 2;
+            System.out.println(lr.getSchool().getId());
+            System.out.println(jwtUtil.extractSpecialClaim(jwt, "schoolid"));
+            if (!lr.getSchool().getId().equals(jwtUtil.extractSpecialClaim(jwt, "schoolid"))) {
+                return 0;
+            }
+            LOGGER.info("Check if the User have rights to do this action");
+            for (Lessons lesson : lr.getLessons()) {
+                if (lesson.getLesson().size() > 0) {
+                    for (LessonSubstitutes lessonSubstitutes : lesson.getLesson()) {
+                        if (lessonSubstitutes.getSubstituteTeacher().getId().equals(jwtUtil.extractIdOrEmail(jwt))) {
+                            substitute = true;
+                        }
+                    }
+                }
+            }
+            if (!lr.getTeacher().getId().equals(jwtUtil.extractIdOrEmail(jwt)) || substitute) return 0;
             activitie.setLesson(lr);
             activitie.setText(ca.getText());
             String[] splitDate = ca.getDate().split("\\.");
-            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitDate[0]));
-            calendar.set(Calendar.MONTH, Integer.parseInt(splitDate[1]));
+            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitDate[0]) + 1);
+            calendar.set(Calendar.MONTH, Integer.parseInt(splitDate[1]) - 1);
             calendar.set(Calendar.YEAR, Integer.parseInt(splitDate[2]));
             activitie.setValidThru(calendar.getTime());
             LOGGER.info("Get teacher and set it to activitie");
@@ -93,9 +107,13 @@ public class ActivityService {
         List<GetActivity> activities = new ArrayList<>();
         try {
             LessonRoles lr = lessonRepo.getOne(lesson);
-            if (lr.getSchool().getId().equals(jwtUtil.extractSpecialClaim(jwt, "schoolid"))) return new ArrayList<>();
+            if (!lr.getSchool().getId().equals(jwtUtil.extractSpecialClaim(jwt, "schoolid"))) {
+                activities.add(new GetActivity());
+                return activities;
+            }
             LOGGER.info("Get all activities");
             activitieRepo.findAllByLesson(lr).forEach(activity -> {
+                System.out.println("Hallo");
                 activities.add(new GetActivity(activity));
             });
             return activities;
